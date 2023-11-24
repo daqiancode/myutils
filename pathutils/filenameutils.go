@@ -1,8 +1,9 @@
 package pathutils
 
-import "strings"
+import (
+	"strings"
+)
 
-//
 func TagFilename(file, tag string) string {
 	if tag == "" {
 		return file
