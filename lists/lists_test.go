@@ -18,9 +18,9 @@ func TestUnique(t *testing.T) {
 
 func TestIntersection(t *testing.T) {
 	a := []int{1, 2, 3, 3, 4, 4}
-	b := []int{1}
+	b := []int{4}
 	r := lists.Intersection(a, b)
-	assert.EqualValues(t, []int{1}, r)
+	assert.EqualValues(t, []int{4}, r)
 
 }
 
@@ -43,4 +43,17 @@ func TestPaging(t *testing.T) {
 	a := []int{1, 2, 3, 3, 4}
 	pages := lists.Paging(a, 3)
 	assert.EqualValues(t, [][]int{{1, 2, 3}, {3, 4}}, pages)
+}
+
+func TestCountPages(t *testing.T) {
+	count := lists.CountPages(2, 3)
+	assert.EqualValues(t, 1, count)
+	count = lists.CountPages(10, 3)
+	assert.EqualValues(t, 4, count)
+}
+
+func TestSort(t *testing.T) {
+	a := []int{100, 2, 12, 2, 34}
+	lists.Sort(a, func(i, j int) []int { return []int{a[i] - a[j]} })
+	assert.EqualValues(t, []int{2, 2, 12, 34, 100}, a)
 }

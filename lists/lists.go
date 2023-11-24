@@ -4,8 +4,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/constraints"
 )
 
 // Map returns a new slice containing the results of applying fn to each
@@ -18,11 +16,11 @@ func Map[T any, V any](arr []T, fn func(v T, i int) V) []V {
 }
 
 // Reduce returns a new slice containing the results of applying fn to each
-func Reduce[T any, V any](arr []T, fn func(v T, i int, acc V) V, acc V) V {
+func Reduce[T any, V any](arr []T, fn func(v T, i int, result V) V, result V) V {
 	for i, v := range arr {
-		acc = fn(v, i, acc)
+		result = fn(v, i, result)
 	}
-	return acc
+	return result
 }
 
 // Filter returns a new slice containing the results of applying fn to each, keep filter(v, i) == true
@@ -36,18 +34,8 @@ func Filter[T any](arr []T, filter func(v T, i int) bool) []T {
 	return res
 }
 
-// FilterInt returns a new slice containing the results of applying fn to each
-func FilterInt[T constraints.Integer](arr []T) []T {
-	return Filter(arr, func(v T, i int) bool { return v != 0 })
-}
-
-// FilterStr returns a new slice containing the results of applying fn to each
-func FilterStr(arr []string) []string {
-	return Filter(arr, func(v string, i int) bool { return v != "" })
-}
-
 // Sort sorts the slice according to the fileds function.
-// less: func(i, j int) , v[i]-v[j] < 0 meand {v[i], v[j]}
+// less: return order of fields(like sql order by), like na, asc,desc, [0,-1,1]
 func Sort(arr any, less func(i, j int) []int) {
 	sort.Slice(arr, func(i, j int) bool {
 		result := less(i, j)
@@ -59,28 +47,6 @@ func Sort(arr any, less func(i, j int) []int) {
 		}
 		return false
 	})
-}
-
-func Index[T comparable](arr []T, value T) int {
-	for i, v := range arr {
-		if v == value {
-			return i
-		}
-	}
-	return -1
-}
-
-func IndexBy[T any](arr []T, fn func(v T, i int) bool) int {
-	for i, v := range arr {
-		if fn(v, i) {
-			return i
-		}
-	}
-	return -1
-}
-
-func Contains[T comparable](arr []T, value T) bool {
-	return Index(arr, value) >= 0
 }
 
 func Int64s2Strs(arr []int64) []string {
@@ -131,19 +97,11 @@ func Concat[T any](arrs ...[]T) []T {
 	return res
 }
 
-func AsMap[T comparable](vs []T) map[T]bool {
-	m := make(map[T]bool, len(vs))
-	for _, v := range vs {
-		m[v] = true
-	}
-	return m
-}
-
 func Subtract[T comparable](a []T, b []T) []T {
 	if len(a) == 0 {
 		return nil
 	}
-	m := AsMap(b)
+	m := AsBoolMap(b)
 	a = Unique(a)
 	var r []T
 	for _, v := range a {
@@ -166,7 +124,7 @@ func Intersection[T comparable](a, b []T) []T {
 	if len(a) == 0 || len(b) == 0 {
 		return nil
 	}
-	m := AsMap(b)
+	m := AsBoolMap(b)
 	a = Unique(a)
 	var r []T
 	for _, v := range a {
@@ -191,6 +149,12 @@ func Paging[T any](page []T, pageSize int) [][]T {
 	}
 	return r
 }
+func CountPages(total, pageSize int) int {
+	if total == 0 || pageSize == 0 {
+		return 0
+	}
+	return (total + pageSize - 1) / pageSize
+}
 
 func GroupBy[T any, E comparable](arr []T, by func(v T) E) map[E][]T {
 	r := make(map[E][]T)
@@ -206,6 +170,7 @@ func GroupBy[T any, E comparable](arr []T, by func(v T) E) map[E][]T {
 	return r
 }
 
+// GroupByOne group by one value
 func GroupByOne[T any, E comparable](arr []T, keepFirst bool, by func(v T) E) map[E]T {
 	r := make(map[E]T)
 	var key E
@@ -220,13 +185,49 @@ func GroupByOne[T any, E comparable](arr []T, keepFirst bool, by func(v T) E) ma
 	return r
 }
 
-func IndexOf[T any](arr []T, fn func(v T) bool) int {
+func Contains[T comparable](arr []T, value T) bool {
+	return Index(arr, value) >= 0
+}
+
+// Index returns the index of the first instance of value in arr, or -1 if value is not present in arr.
+func Index[T comparable](arr []T, value T) int {
 	for i, v := range arr {
-		if fn(v) {
+		if v == value {
 			return i
 		}
 	}
 	return -1
+}
+
+func IndexBy[T any](arr []T, fn func(v T, i int) bool) int {
+	for i, v := range arr {
+		if fn(v, i) {
+			return i
+		}
+	}
+	return -1
+}
+
+// Count returns the count of value in arr
+func Count[T comparable](arr []T, value T) int {
+	var count int
+	for _, v := range arr {
+		if v == value {
+			count++
+		}
+	}
+	return count
+}
+
+// CountBy returns the count of value in arr by given function
+func CountBy[T any](arr []T, fn func(v T, i int) bool) int {
+	var count int
+	for i, v := range arr {
+		if fn(v, i) {
+			count++
+		}
+	}
+	return count
 }
 
 // Any Returns true if arr contain any true value
@@ -256,11 +257,29 @@ func Reindex[T any](arr []T, indexes []int) {
 	}
 }
 
+// AsBoolMap arr -> [value]bool
+func AsBoolMap[T comparable](vs []T) map[T]bool {
+	m := make(map[T]bool, len(vs))
+	for _, v := range vs {
+		m[v] = true
+	}
+	return m
+}
+
 // ValueIndex arr -> [value]index
-func ValueIndex[T comparable](arr []T) map[T]int {
+func AsIndexMap[T comparable](arr []T) map[T]int {
 	r := make(map[T]int, len(arr))
 	for i, v := range arr {
 		r[v] = i
+	}
+	return r
+}
+
+// Count arr -> [value]count
+func AsCountMap[T comparable](arr []T) map[T]int {
+	r := make(map[T]int, len(arr))
+	for _, v := range arr {
+		r[v]++
 	}
 	return r
 }
