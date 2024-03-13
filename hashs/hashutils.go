@@ -7,6 +7,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Md5Str(text string) string {
@@ -53,4 +55,17 @@ func Sha2Reader(r io.Reader) string {
 func HMAC(bs, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
 	return mac.Sum(bs)
+}
+
+func Bcrypt(password string, cost int) string {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), cost)
+	if err != nil {
+		return ""
+	}
+	return string(bytes)
+}
+
+func BcryptCompare(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

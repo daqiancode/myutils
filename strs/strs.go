@@ -1,4 +1,4 @@
-package stringutils
+package strs
 
 import (
 	"bytes"
@@ -7,18 +7,25 @@ import (
 	"strconv"
 	"text/template"
 
-	"strings"
+	"golang.org/x/exp/constraints"
 )
 
-func Ints(ss []string) []int {
+func ToInts(ss []string) []int {
 	r := make([]int, len(ss))
 	for i, v := range ss {
 		r[i], _ = strconv.Atoi(v)
 	}
 	return r
 }
+func ToInt64s(ss []string) []int64 {
+	r := make([]int64, len(ss))
+	for i, v := range ss {
+		r[i], _ = strconv.ParseInt(v, 10, 64)
+	}
+	return r
+}
 
-func IntsDefault(s string, dv ...int) int {
+func ToIntsDefault(s string, dv ...int) int {
 	v, err := strconv.Atoi(s)
 	if nil != err {
 		if len(dv) > 0 {
@@ -28,21 +35,12 @@ func IntsDefault(s string, dv ...int) int {
 	}
 	return v
 }
-func Strings(ints []int) []string {
+func ToString[T constraints.Integer](ints []T) []string {
 	r := make([]string, len(ints))
 	for i, v := range ints {
-		r[i] = strconv.Itoa(v)
+		r[i] = strconv.FormatInt(int64(v), 10)
 	}
 	return r
-}
-
-// FileNameAppend hello.jpg,_1 -> hello_1.jpg
-func FileNameAppend(filename, subname string) string {
-	i := strings.LastIndex(filename, ".")
-	if i == -1 {
-		return filename + subname
-	}
-	return filename[0:i] + subname + filename[i:]
 }
 
 // FormatTpl format string with text/template

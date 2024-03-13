@@ -1,15 +1,15 @@
-package netutils_test
+package nets_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/daqiancode/myutils/netutils"
+	"github.com/daqiancode/myutils/nets"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetIP(t *testing.T) {
-	localIPs := netutils.GetLocalIPs()
+	localIPs := nets.GetLocalIPs()
 	assert.True(t, len(localIPs) > 0)
 	fmt.Println(localIPs)
 }

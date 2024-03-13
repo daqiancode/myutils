@@ -1,4 +1,4 @@
-package encrypts
+package cryptos
 
 import (
 	"bytes"

@@ -1,14 +1,14 @@
-package encrypts_test
+package cryptos_test
 
 import (
 	"testing"
 
-	"github.com/daqiancode/myutils/encrypts"
+	"github.com/daqiancode/myutils/cryptos"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAESCBC(t *testing.T) {
-	aseCBC := encrypts.NewAESCBCMd5Key("hello")
+	aseCBC := cryptos.NewAESCBCMd5Key("hello")
 	raw := "world"
 	encrypted, err := aseCBC.EncryptStr(raw)
 	assert.Nil(t, err)

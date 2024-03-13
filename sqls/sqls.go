@@ -1,4 +1,4 @@
-package sqlutils
+package sqls
 
 import (
 	"reflect"

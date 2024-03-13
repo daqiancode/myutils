@@ -1,15 +1,15 @@
-package encrypts_test
+package cryptos_test
 
 import (
 	"testing"
 
-	"github.com/daqiancode/myutils/encrypts"
+	"github.com/daqiancode/myutils/cryptos"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRSA(t *testing.T) {
-	rsa := encrypts.RSA{}
-	pri, pub, err := rsa.GenPem(1024)
+	rsa := cryptos.RSA{}
+	pri, pub, err := rsa.GenerateKeyPairPem(1024)
 	assert.Nil(t, err)
 	priKey, err := rsa.ParsePrivateKeyFromPEM(pri)
 	assert.Nil(t, err)

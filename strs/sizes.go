@@ -1,4 +1,4 @@
-package stringutils
+package strs
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//ParseSizes 600x800,200x300, -> [[600,800],[200,300]],200->[[200,200]]
+// ParseSizes 600x800,200x300, -> [[600,800],[200,300]],200->[[200,200]]
 func ParseSizes(sizesStr string) ([][]int, error) {
 	if sizesStr == "" {
 		return nil, errors.New("ParseSize error: size string is empty")
@@ -23,7 +23,7 @@ func ParseSizes(sizesStr string) ([][]int, error) {
 	return r, nil
 }
 
-//ParseSize 200x300 -> [200,300],200->[200,200]
+// ParseSize 200x300 -> [200,300],200->[200,200]
 func ParseSize(sizeStr string) ([]int, error) {
 	if sizeStr == "" {
 		return nil, errors.New("ParseSize error: size string is empty")

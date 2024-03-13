@@ -1,4 +1,4 @@
-package encrypts
+package cryptos
 
 import (
 	"crypto/rand"
@@ -33,7 +33,7 @@ func (RSA) OAEPDecrypt(cipherText string, privKey rsa.PrivateKey) ([]byte, error
 	return plaintext, nil
 }
 
-func (RSA) GenPem(bits int) (string, string, error) {
+func (RSA) GenerateKeyPairPem(bits int) (string, string, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
 		return "", "", err

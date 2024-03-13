@@ -1,17 +1,17 @@
-package pathutils_test
+package paths_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/daqiancode/myutils/pathutils"
+	"github.com/daqiancode/myutils/paths"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPathMaker(t *testing.T) {
-	p1 := pathutils.MakeDateRandPath("jpg")
-	p2 := pathutils.MakeIdPath("12", "jpg")
-	p3 := pathutils.MakeRandPath("jpg")
+	p1 := paths.MakeDateRandPath("jpg")
+	p2 := paths.MakeIdPath("12", "jpg")
+	p3 := paths.MakeRandPath("jpg")
 	assert.Equal(t, "00/12/0012.jpg", p2)
 	assert.Equal(t, 30, len(p3))
 	fmt.Println(p1)
