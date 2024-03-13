@@ -26,7 +26,7 @@ func RandomNumber(n int) string {
 func Random(n int) string {
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = AlphabetNumberNoCase[rand.Intn(len(AlphabetNumberNoCase))]
+		b[i] = AlphabetNumber[rand.Intn(len(AlphabetNumber))]
 	}
 	return string(b)
 }

@@ -35,7 +35,7 @@ func Filter[T any](arr []T, filter func(v T, i int) bool) []T {
 }
 
 // Sort sorts the slice according to the fileds function.
-// less: return order of fields(like sql order by), like na, asc,desc, [0,-1,1]
+// less: return comparion result of fields(like sql order by), order by id,name,age: [0,-1,1]
 func Sort(arr any, less func(i, j int) []int) {
 	sort.Slice(arr, func(i, j int) bool {
 		result := less(i, j)
@@ -280,6 +280,36 @@ func AsCountMap[T comparable](arr []T) map[T]int {
 	r := make(map[T]int, len(arr))
 	for _, v := range arr {
 		r[v]++
+	}
+	return r
+}
+
+// AsMap arr -> [key]value
+func AsMap[K comparable, V any](arr []V, fn func(v V) K) map[K]V {
+	r := make(map[K]V, len(arr))
+	for _, v := range arr {
+		r[fn(v)] = v
+	}
+	return r
+}
+
+// Remove removes the first instance of t from list
+func Remove[T comparable](list []T, t T) []T {
+	for i, v := range list {
+		if v == t {
+			return append(list[:i], list[i+1:]...)
+		}
+	}
+	return list
+}
+
+// RemoveAll removes all instances of t from list
+func RemoveAll[T comparable](list []T, t T) []T {
+	var r []T
+	for _, v := range list {
+		if v != t {
+			r = append(r, v)
+		}
 	}
 	return r
 }

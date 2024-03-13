@@ -1,7 +1,11 @@
 package stringutils
 
 import (
+	"bytes"
+	"fmt"
+	"regexp"
 	"strconv"
+	"text/template"
 
 	"strings"
 )
@@ -32,11 +36,33 @@ func Strings(ints []int) []string {
 	return r
 }
 
-//FileNameAppend hello.jpg,_1 -> hello_1.jpg
+// FileNameAppend hello.jpg,_1 -> hello_1.jpg
 func FileNameAppend(filename, subname string) string {
 	i := strings.LastIndex(filename, ".")
 	if i == -1 {
 		return filename + subname
 	}
 	return filename[0:i] + subname + filename[i:]
+}
+
+// FormatTpl format string with text/template
+func FormatTpl(s string, args map[string]any) string {
+	buf := bytes.NewBuffer(nil)
+	template.Must(template.New("").Parse(s)).Execute(buf, args)
+	return buf.String()
+}
+
+// Format: tpl: "Hello ${name}" {name: "World"} -> "Hello World"
+func Format(tpl string, args map[string]any) string {
+	return regexp.MustCompile(`\${([^}]*)}`).ReplaceAllStringFunc(tpl, func(s string) string {
+		key := s[2 : len(s)-1]
+		if v, ok := args[key]; ok {
+			if r, ok := v.(string); ok {
+				return r
+			} else {
+				return fmt.Sprintf("%v", v)
+			}
+		}
+		return s
+	})
 }
