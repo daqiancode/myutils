@@ -4,6 +4,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"golang.org/x/exp/constraints"
 )
 
 // Map returns a new slice containing the results of applying fn to each
@@ -149,7 +151,7 @@ func Paging[T any](page []T, pageSize int) [][]T {
 	}
 	return r
 }
-func CountPages(total, pageSize int) int {
+func CountPages[T constraints.Integer](total, pageSize T) T {
 	if total == 0 || pageSize == 0 {
 		return 0
 	}
