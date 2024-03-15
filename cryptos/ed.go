@@ -39,7 +39,7 @@ func (EDdSA) GenerateKeyPairPem() (pubKeyPEM string, priKeyPem string, err error
 }
 
 func (EDdSA) Sign(privKeyPem string, bs []byte) (signature []byte, err error) {
-	block, _ := pem.Decode([]byte(privKeyPem))
+	block, _ := pem.Decode([]byte(EnsurePrivateKeyHeader(privKeyPem)))
 	if block == nil {
 		return nil, nil
 	}
@@ -52,7 +52,7 @@ func (EDdSA) Sign(privKeyPem string, bs []byte) (signature []byte, err error) {
 }
 
 func (EDdSA) Verify(pubKeyPem string, bs []byte, signature []byte) (bool, error) {
-	block, _ := pem.Decode([]byte(pubKeyPem))
+	block, _ := pem.Decode([]byte(EnsurePublicKeyHeader(pubKeyPem)))
 	if block == nil {
 		return false, nil
 	}

@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"math/big"
+	"strings"
 )
 
 // Elliptic Curve Cryptography (ECC) is a key-based technique for encrypting data.
@@ -64,7 +65,7 @@ func (ec ECC) EncodePublic(pubKey *ecdsa.PublicKey) (key string, err error) {
 
 // DecodePrivate private key
 func (ec ECC) DecodePrivate(pemEncodedPriv string) (privateKey *ecdsa.PrivateKey, err error) {
-	blockPriv, _ := pem.Decode([]byte(pemEncodedPriv))
+	blockPriv, _ := pem.Decode([]byte(EnsureECPrivateKeyHeader(pemEncodedPriv)))
 	x509EncodedPriv := blockPriv.Bytes
 	privateKey, err = x509.ParseECPrivateKey(x509EncodedPriv)
 
@@ -73,7 +74,7 @@ func (ec ECC) DecodePrivate(pemEncodedPriv string) (privateKey *ecdsa.PrivateKey
 
 // DecodePublic public key
 func (ec ECC) DecodePublic(pemEncodedPub string) (publicKey *ecdsa.PublicKey, err error) {
-	blockPub, _ := pem.Decode([]byte(pemEncodedPub))
+	blockPub, _ := pem.Decode([]byte(EnsurePublicKeyHeader(pemEncodedPub)))
 	x509EncodedPub := blockPub.Bytes
 	genericPublicKey, err := x509.ParsePKIXPublicKey(x509EncodedPub)
 	publicKey = genericPublicKey.(*ecdsa.PublicKey)
@@ -108,4 +109,24 @@ func (ec ECC) Verify(pubKeyPem string, bs []byte, signature []byte) (bool, error
 		return false, err
 	}
 	return ecdsa.Verify(pubKey, signhash, r, s), nil
+}
+
+func EnsurePublicKeyHeader(pubKey string) string {
+	if strings.HasPrefix(pubKey, "----") {
+		return pubKey
+	}
+	return "-----BEGIN PUBLIC KEY-----\n" + pubKey + "\n-----END PUBLIC KEY-----"
+}
+func EnsurePrivateKeyHeader(privKey string) string {
+	if strings.HasPrefix(privKey, "----") {
+		return privKey
+	}
+	return "-----BEGIN PRIVATE KEY-----\n" + privKey + "\n-----END PRIVATE KEY-----"
+}
+
+func EnsureECPrivateKeyHeader(privKey string) string {
+	if strings.HasPrefix(privKey, "----") {
+		return privKey
+	}
+	return "-----BEGIN EC PRIVATE KEY-----\n" + privKey + "\n-----END EC PRIVATE KEY-----"
 }
