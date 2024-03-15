@@ -5,7 +5,7 @@ import "golang.org/x/exp/constraints"
 func Max[T constraints.Ordered](a []T) T {
 	m := a[0]
 	for _, v := range a {
-		if m > v {
+		if m < v {
 			m = v
 		}
 	}
@@ -14,7 +14,7 @@ func Max[T constraints.Ordered](a []T) T {
 func Min[T constraints.Ordered](a []T) T {
 	m := a[0]
 	for _, v := range a {
-		if m < v {
+		if m > v {
 			m = v
 		}
 	}
