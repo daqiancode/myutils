@@ -1,6 +1,7 @@
 package lists
 
 import (
+	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
@@ -314,4 +315,55 @@ func RemoveAll[T comparable](list []T, t T) []T {
 		}
 	}
 	return r
+}
+
+func Shuffle[T any](arr []T) []T {
+	r := make([]T, len(arr))
+	copy(r, arr)
+	for i := len(r) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		r[i], r[j] = r[j], r[i]
+	}
+	return r
+
+}
+func Sample[T any](arr []T, n int) []T {
+	if n >= len(arr) {
+		return arr
+	}
+	Shuffle(arr)
+	return arr[:n]
+}
+func Partition[T any](arr []T, n int) [][]T {
+	var r [][]T
+	for i := 0; i < len(arr); i += n {
+		end := i + n
+		if end > len(arr) {
+			end = len(arr)
+		}
+		r = append(r, arr[i:end])
+	}
+	return r
+}
+
+func Zip[T any](a []T, b []T) [][2]T {
+	minLen := len(a)
+	if len(b) < minLen {
+		minLen = len(b)
+	}
+	r := make([][2]T, minLen)
+	for i := 0; i < len(a) && i < len(b); i++ {
+		r[i] = [2]T{a[i], b[i]}
+	}
+	return r
+}
+
+func Unzip[T any](a [][2]T) ([]T, []T) {
+	x := make([]T, len(a))
+	y := make([]T, len(a))
+	for i, v := range a {
+		x[i] = v[0]
+		y[i] = v[1]
+	}
+	return x, y
 }
