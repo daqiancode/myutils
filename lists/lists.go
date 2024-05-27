@@ -9,6 +9,34 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+// Map
+func M[T any, V any](arr []T, fn func(v T) V) []V {
+	res := make([]V, len(arr))
+	for i, v := range arr {
+		res[i] = fn(v)
+	}
+	return res
+}
+
+// Reduce
+func R[T any, V any](arr []T, fn func(v T, result V) V, result V) V {
+	for _, v := range arr {
+		result = fn(v, result)
+	}
+	return result
+}
+
+// Filter
+func F[T any](arr []T, filter func(v T) bool) []T {
+	var res []T
+	for _, v := range arr {
+		if filter(v) {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
 // Map returns a new slice containing the results of applying fn to each
 func Map[T any, V any](arr []T, fn func(v T, i int) V) []V {
 	res := make([]V, len(arr))
